@@ -208,7 +208,7 @@ function parseList(listContainer){
 export async function startParse(start, end){
     let parsedGrants = []
     for(let i = start; i < end;i++){
-        await delay(1000)
+        await delay(250)
         await loadPage(i)
                 .then(grants=>{
                     parsedGrants.push(grants)
@@ -222,7 +222,7 @@ export async function startParse(start, end){
 async function parseGrantsApplication(grants){
     console.log('parse grants package...')
     for(let i = 0; i < grants.length;i++){
-        await delay(250)
+        await delay(125)
         await loadGrantApplication(grants[i])
         console.log(`grant ${i} fully parsed...`)
     }
