@@ -210,7 +210,7 @@ function parseList(listContainer){
  */
 export async function startParse(start, end){
     let parsedGrants = []
-    for(let i = start; i < end;i++){
+    for(let i = start; i <= end;i++){
         await delay(250)
         await loadPage(i)
                 .then(grants=>{

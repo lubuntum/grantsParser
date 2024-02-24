@@ -35,11 +35,11 @@ function UserPanel(){
         setStatus("Загрузка ...")
         
         for(let i = 0; i < count;i++){
-            console.log(`start = ${startFromPage} to page ${startFromPage+step}`)
-            await startParse(startFromPage, startFromPage + step)
+            console.log(`start = ${startFromPage} to page ${startFromPage+step-1}`)
+            await startParse(startFromPage, startFromPage + step-1)
             console.log(`package parsed`)
             // +1 что бы не спарсить последнюю страницу, которая уже была
-            startFromPage += step+1 
+            startFromPage += step 
         }
         
         setStatus("Загружено")
