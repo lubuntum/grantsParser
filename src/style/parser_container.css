@@ -31,6 +31,9 @@ h3{
     align-items: center;
     flex-wrap: wrap;
 }
+.main_options .options{
+    justify-content: space-evenly;
+}
 .option:focus{
     border:none;
     outline: none;
@@ -44,12 +47,16 @@ h3{
     font-weight: 600;
     font-size: 15px;
 }
+
+.desc{
+    padding: 0px 15px;
+}
 .parse_btn{
     display: flex;
     justify-content: center;
     align-items: center;
     border: none;
-    width: 115px;
+    width: 155px;
     height: 47.6px;
     padding: 5px 15px;
     margin: 15px;
@@ -71,6 +78,10 @@ h3{
     justify-content: center;
     color: whitesmoke;
 }
+.main_options .usability{
+    padding-top: 10px;
+}
+
 .usability p{
     margin: 15px 0px 0px 0px;
 }

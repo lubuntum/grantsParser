@@ -3,7 +3,7 @@ import { startParse } from "../modules/grabber";
 import { saveGrants } from "../modules/xlsxParser";
 import { loadMaxPageNumber } from "../modules/maxPageCount";
 function UserPanel(){
-    const [status,setStatus] = useState("Not started")
+    const [status,setStatus] = useState("Не начато")
     const [startPage, setStartPage] = useState(0)
     const [step, setStep] = useState(0)
     const [count, setCount] = useState(0)
@@ -56,11 +56,24 @@ function UserPanel(){
     return(
         <div className="parse_container">
             <h3>Параметры парсера</h3>
-                <div className="options">
-                    <input className="option" type="number" value={startPage} min={0} placeholder="Start from page..." onChange={handleStart}/>
-                    <input className="option" type="number" value={step} max={50} min={1} placeholder="Step"  onChange={handleStep}/>
-                    <input className="option" type="number" value={count} max={999} min={1} placeholder="How many times" onChange={handleCount} />
+            <div className="main_options">
+            <div className="options">
+                    <div className="usability">
+                        <label className="desc" htmlFor="">Начальная страница парсинга</label>
+                        <input className="option" type="number" value={startPage} min={0} placeholder="Начать со страницы" onChange={handleStart}/>
+                    </div>
+                    <div className="usability">
+                        <label className="desc" htmlFor="">Глубина парсинга (кол-во страниц)</label>
+                        <input className="option" type="number" value={step} max={50} min={1} placeholder="Шаг"  onChange={handleStep}/>
+                    </div>
+                    <div className="usability">
+                        <label className="desc" htmlFor="">Кол-во повторений парсинга</label>
+                        <input className="option" type="number" value={count} max={999} min={1} placeholder="Повторить раз" onChange={handleCount} />
+                    </div>
+                    
                 </div>
+            </div>
+                
             <p>Фильтры по датам</p>
                 <div className="options">
                     <input type="date" className="option" />
