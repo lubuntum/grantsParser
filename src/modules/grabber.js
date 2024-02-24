@@ -3,7 +3,7 @@ import { saveGrants, addDataWorkSheet } from "./xlsxParser"
 const DIRECT_URL = 'https://xn--80afcdbalict6afooklqi5o.xn--p1ai'//Для работы с внутренними ссылками
 
 //Внешнее описание гранта
-const URL = "https://xn--80afcdbalict6afooklqi5o.xn--p1ai/public/application/cards?page="//Для работы с карточками
+export const URL = "https://xn--80afcdbalict6afooklqi5o.xn--p1ai/public/application/cards?page="//Для работы с карточками
 const CARD = 'cards-item-row'
 //Траблы с датами ,изменитт паттерн!!!
 const TITLE = "projects__title"
@@ -180,6 +180,9 @@ function stripPrice(price){
 function stripText(text){
     return text.replaceAll(/\r?\n|\r/g,"").replaceAll(/ +/g," ").trim()
 }
+/**
+ * Получить весь текст из контейнера игнорируя другие вложенные элементы
+ */
 function parseTextOnly (container){
     return Array.from(container.childNodes)
         .filter(node=>node.nodeType===Node.TEXT_NODE)
