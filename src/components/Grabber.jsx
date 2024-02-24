@@ -7,6 +7,7 @@ function UserPanel(){
     const [startPage, setStartPage] = useState(0)
     const [step, setStep] = useState(0)
     const [count, setCount] = useState(0)
+    const [parseDelay, setParseDelay] = useState(0.250)
 
     const [pageCount, setPageCount] = useState("")
 
@@ -36,7 +37,7 @@ function UserPanel(){
         
         for(let i = 0; i < count;i++){
             console.log(`start = ${startFromPage} to page ${startFromPage+step-1}`)
-            await startParse(startFromPage, startFromPage + step-1)
+            await startParse(startFromPage, startFromPage + step-1, parseDelay*1000)
             console.log(`package parsed`)
             // +1 что бы не спарсить последнюю страницу, которая уже была
             startFromPage += step 
@@ -52,6 +53,9 @@ function UserPanel(){
     }
     const handleCount = event =>{
         setCount(parseInt(event.target.value))
+    }
+    const handleDelay = event =>{
+        setParseDelay(parseFloat(event.target.value))
     }
     return(
         <div className="parse_container">
@@ -69,6 +73,10 @@ function UserPanel(){
                     <div className="usability">
                         <label className="desc" htmlFor="">Кол-во повторений парсинга</label>
                         <input className="option" type="number" value={count} max={999} min={1} placeholder="Повторить раз" onChange={handleCount} />
+                    </div>
+                    <div className="usability">
+                        <label className="desc" htmlFor="">Задержка запросов на парсинг</label>
+                        <input className="option" type="number" value={parseDelay} max={10.0} min={0.125} step={0.01} placeholder="Задержка"  onChange={handleDelay}/>
                     </div>
                     
                 </div>

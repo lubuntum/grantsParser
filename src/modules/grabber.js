@@ -208,24 +208,24 @@ function parseList(listContainer){
  * Необходимо для начала парсинга, сначала загружает все данные со страницы, а затем с помощью
  * parseGrantsApplication докачивает каждый грант до конца
  */
-export async function startParse(start, end){
+export async function startParse(start, end, fetchDelay){
     let parsedGrants = []
     for(let i = start; i <= end;i++){
-        await delay(250)
+        await delay(fetchDelay)
         await loadPage(i)
                 .then(grants=>{
                     parsedGrants.push(grants)
                 })
         console.log(parsedGrants)
-        await parseGrantsApplication(parsedGrants[parsedGrants.length-1])
+        await parseGrantsApplication(parsedGrants[parsedGrants.length-1], fetchDelay)
     }
     saveGrants(parsedGrants, start, end)
     //console.log({pages:parsedGrants})
 }
-async function parseGrantsApplication(grants){
+async function parseGrantsApplication(grants, fetchDelay){
     console.log('parse grants package...')
     for(let i = 0; i < grants.length;i++){
-        await delay(125)
+        await delay(fetchDelay)
         await loadGrantApplication(grants[i])
         console.log(`grant ${i} fully parsed...`)
     }
