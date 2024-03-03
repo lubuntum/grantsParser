@@ -46,7 +46,7 @@ const ERROR_NOTIFY = 'https://assets.mixkit.co/active_storage/sfx/2869/2869-prev
 //let parsedGrants = []
 class Grant{
     constructor(title, contest, direction, price, fondPrice,
-        location, expertise, requestCode, fromDate){
+        location, expertise, requestCode, fromDate, rating){
         this.title = title
         this.contest = contest
         this.direction = direction
@@ -56,6 +56,7 @@ class Grant{
         this.expertise = expertise
         this.requestCode = requestCode
         this.fromDate = fromDate
+        this.rating = rating
     }
 }
 
@@ -163,8 +164,9 @@ function parseCard(card){
     const requestInfo = projectDescContainer.lastElementChild.innerText
     const fromDate = requestInfo.match(PROJECT_DATE_REG)[0]
     const requestCode = requestInfo.match(PROJECT_REQUEST_REG)[0]
+    const rating = card.querySelector(".projects__type-rate span:last-child")?.textContent
     return new Grant(title, contest, direction, price, 
-                    fondPrice, location, exprestise, requestCode, fromDate )
+                    fondPrice, location, exprestise, requestCode, fromDate, rating )
 }
 function searchByRegex(dataList, reg){
     return dataList.find(el=> reg.test(el))
