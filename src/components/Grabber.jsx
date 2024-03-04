@@ -32,17 +32,27 @@ function UserPanel(){
         setPageCount(pages)
     }
     const handleSaveGrants = async event =>{
+        await handleLoadMaxPageNumber()//Подгрузить макс. число страниц для проверки диапазона 
+        
         let startFromPage = startPage
+        console.log(`pageCount=>${pageCount}, start=>${startFromPage}, count=>${count}`)
         setStatus("Загрузка ...")
-        
-        for(let i = 0; i < count;i++){
-            console.log(`start = ${startFromPage} to page ${startFromPage+step-1}`)
-            await startParse(startFromPage, startFromPage + step-1, parseDelay*1000)
-            console.log(`package parsed`)
-            // +1 что бы не спарсить последнюю страницу, которая уже была
-            startFromPage += step 
+        try{
+            for(let i = 0; i < count;i++){
+                if(startFromPage > pageCount) break
+                console.log(`start = ${startFromPage} to page ${startFromPage+step-1}`)//-1 что бы включить начальную страницу
+                await startParse(startFromPage, startFromPage + step-1, parseDelay*1000)
+                console.log(`package parsed`)
+                startFromPage += step
+            }
+        }catch(err){
+            console.log(`Возникла ошибка -> ${err}, попытка восстановления...`)
+            console.log(`Текущая стартовая страница -> ${startFromPage}`)
+            setStartPage(startFromPage)
+            await new Promise((resolve)=>setTimeout(resolve, 2000))
+            handleSaveGrants()
+            return
         }
-        
         setStatus("Загружено")
     }
     const handleStart = event =>{
