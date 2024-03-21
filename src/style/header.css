@@ -1,0 +1,28 @@
+.header_container {
+  padding: 15px 20px;
+  background-color: lightgray;
+}
+.content {
+  display: flex;
+  justify-content: space-between;
+}
+.options_container {
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  align-items: center;
+}
+.options_item {
+  padding: 5px;
+  user-select: none;
+  transition: all 0.3s ease;
+  font-weight: bold;
+}
+.options_item:hover {
+  color: lightcoral;
+}
+.title {
+  font-size: 26px;
+  font-weight: bold;
+  padding: 5px 15px;
+}

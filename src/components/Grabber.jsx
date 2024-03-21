@@ -59,6 +59,7 @@ function UserPanel(){
     }
     return(
         <div className="parse_container">
+            <h1>Парсер для ФПГ</h1>
             <h3>Параметры парсера</h3>
             <div className="main_options">
             <div className="options">
