@@ -2,7 +2,8 @@ import { useState } from "react";
 import { startParse } from "../modules/grabber";
 import { saveGrants } from "../modules/xlsxParser";
 import { loadMaxPageNumber } from "../modules/maxPageCount";
-function UserPanel(){
+import GrabberPanel from "./GrabberPanel";
+function UserPanel({grantsCompany, url}){
     const [status,setStatus] = useState("Не начато")
     const [startPage, setStartPage] = useState(0)
     const [step, setStep] = useState(0)
@@ -27,7 +28,7 @@ function UserPanel(){
     }
     const handleLoadMaxPageNumber = async event =>{
         setPageCount("Загрузка")
-        let pages = await loadMaxPageNumber()
+        let pages = await loadMaxPageNumber(url)
         console.log(pages)
         setPageCount(pages)
     }
@@ -37,7 +38,7 @@ function UserPanel(){
         
         for(let i = 0; i < count;i++){
             console.log(`start = ${startFromPage} to page ${startFromPage+step-1}`)
-            await startParse(startFromPage, startFromPage + step-1, parseDelay*1000)
+            await startParse(startFromPage, startFromPage + step-1, parseDelay*1000, url)
             console.log(`package parsed`)
             // +1 что бы не спарсить последнюю страницу, которая уже была
             startFromPage += step 
@@ -58,48 +59,13 @@ function UserPanel(){
         setParseDelay(parseFloat(event.target.value))
     }
     return(
-        <div className="parse_container">
-            <h1>Парсер для ФПГ</h1>
-            <h3>Параметры парсера</h3>
-            <div className="main_options">
-            <div className="options">
-                    <div className="usability">
-                        <label className="desc" htmlFor="">Начальная страница парсинга</label>
-                        <input className="option" type="number" value={startPage} min={0} placeholder="Начать со страницы" onChange={handleStart}/>
-                    </div>
-                    <div className="usability">
-                        <label className="desc" htmlFor="">Глубина парсинга (кол-во страниц)</label>
-                        <input className="option" type="number" value={step} max={50} min={1} placeholder="Шаг"  onChange={handleStep}/>
-                    </div>
-                    <div className="usability">
-                        <label className="desc" htmlFor="">Кол-во повторений парсинга</label>
-                        <input className="option" type="number" value={count} max={999} min={1} placeholder="Повторить раз" onChange={handleCount} />
-                    </div>
-                    <div className="usability">
-                        <label className="desc" htmlFor="">Задержка запросов на парсинг</label>
-                        <input className="option" type="number" value={parseDelay} max={10.0} min={0.125} step={0.01} placeholder="Задержка"  onChange={handleDelay}/>
-                    </div>
-                    
-                </div>
-            </div>
-                
-            <p>Фильтры по датам</p>
-                <div className="options">
-                    <input type="date" className="option" />
-                    <input type="date" className="option" />
-                </div>
-                <div className="options">
-                <div className="usability">
-                    <button className="parse_btn" onClick={handleSaveGrants}> Начать </button>
-                    <p>Статус: {status}</p>
-                </div>
-                <div className="usability">
-                    <button className="parse_btn" onClick={handleLoadMaxPageNumber}>Кол-во страниц</button>
-                    <p>Страниц: {pageCount}</p>
-                </div>
-                </div>
-                
-        </div>
+        <GrabberPanel startPage={startPage} step={step}
+                count={count} parseDelay={parseDelay}
+                status={status} pageCount={pageCount}
+                handleStart={handleStart} handleStep={handleStep}
+                handleCount={handleCount} handleDelay={handleDelay}
+                handleSaveGrants={handleSaveGrants} handleLoadMaxPageNumber={handleLoadMaxPageNumber}
+                grantsCompany={grantsCompany}/>
     )
 }
 

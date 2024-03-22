@@ -18,9 +18,15 @@
   transition: all 0.3s ease;
   font-weight: bold;
 }
-.options_item:hover {
+.options_item a{
+  text-decoration: none;
+  color: black;
+}
+
+.options_item a:hover {
   color: lightcoral;
 }
+
 .title {
   font-size: 26px;
   font-weight: bold;
