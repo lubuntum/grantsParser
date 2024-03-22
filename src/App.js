@@ -3,7 +3,6 @@ import './style/footer.css'
 import './style/header.css'
 import './style/parser_container.css'
 import UserPanel from './components/Grabber'
-import CreativeGrabber from './components/CreativeGrabber'
 import {BrowserRouter, Link, Route, Routes} from 'react-router-dom'
 function App() {
   const title = "Парсер грантов"
