@@ -1,4 +1,3 @@
-import {URL} from './grabber.js'
 const PAGINATION_CONTAINER = "pagination"
 /**
  * @doc DOM HTML document
@@ -12,9 +11,9 @@ function getMaxPage(doc){
     return maxPageNumber
 }
 
-export async function loadMaxPageNumber(){
+export async function loadMaxPageNumber(url){
     return new Promise((resolve, reject)=>{
-        fetch(`${URL}1`)
+        fetch(`${url}1`)
         .then(res => res.text())
         .then(html =>{
             const doc = document.createElement('div')
