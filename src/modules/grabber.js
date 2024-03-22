@@ -1,9 +1,9 @@
 import { saveGrants, addDataWorkSheet } from "./xlsxParser"
 
-const DIRECT_URL = 'https://xn--80afcdbalict6afooklqi5o.xn--p1ai'//Для работы с внутренними ссылками
+//const DIRECT_URL = 'https://xn--80afcdbalict6afooklqi5o.xn--p1ai'//Для работы с внутренними ссылками
 
 //Внешнее описание гранта
-export const URL = "https://xn--80afcdbalict6afooklqi5o.xn--p1ai/public/application/cards?page="//Для работы с карточками
+//export const URL_DEPRECATE = "https://xn--80afcdbalict6afooklqi5o.xn--p1ai/public/application/cards?page="//Для работы с карточками
 const CARD = 'cards-item-row'
 //Траблы с датами ,изменитт паттерн!!!
 const TITLE = "projects__title"
@@ -42,6 +42,7 @@ const WINNER_CONTACTS = 'winner__details-contacts'
 const WINNER_CONTACTS_LOCATION = 'winner__details-contacts-item'
 
 const ERROR_NOTIFY = 'https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3'
+const NETWORK_ERR = 'Ошибка при получении страницы'
 //const WINNER_WEB_SITE = 'center-link'
 //let parsedGrants = []
 class Grant{
@@ -60,10 +61,10 @@ class Grant{
     }
 }
 
-function loadPage(num){
+function loadPage(num, url){//url
     console.log(`loading page num = ${num}`)
     return new Promise((resolve,reject)=>{
-        fetch(`${URL}${num}`)
+        fetch(`${url}${num}`)//`${URL}?page=${num}`
         .then(res=> res.text())
         .then(html=>{
             const doc = document.createElement('div')
@@ -73,7 +74,7 @@ function loadPage(num){
                 return parseCard(card)
             })
             //Получение ссылок на все карточки и сохранение их в связанных с ними обьектах
-            filterLinksForParse(doc.getElementsByTagName('a')).forEach((link, index)=>{
+            filterLinksForParse(doc.getElementsByTagName('a'), url).forEach((link, index)=>{
                 grants[index].tempLink = link
             })
             //loadGrantApplication(grants[0])
@@ -87,7 +88,10 @@ function loadPage(num){
     })
         .catch(err=>{
             console.log(err)
-            playNotification(URL)
+            console.log("Попытка повторного парсинга страницы грантов...")
+            new Promise((resolve)=>setTimeout(resolve, 2000))
+            reject(err)
+            //playNotification(URL)
         })
         //resolve("Error has occured while fetching the data")
     })
@@ -136,7 +140,10 @@ async function loadGrantApplication(grant){
         })
         .catch(err=>{
             console.log(err)
-            playNotification(URL)
+            console.log("Попытка повторного парсинга...")
+            new Promise((resolve)=>setTimeout(resolve, 2000))
+            reject(NETWORK_ERR)
+            //playNotification(URL)
         })
 
     })
@@ -190,9 +197,11 @@ function parseTextOnly (container){
         .filter(node=>node.nodeType===Node.TEXT_NODE)
         .map(el=> el.textContent).join('')
 }
-function filterLinksForParse(links){
+function filterLinksForParse(links, url){
     return Array.from(links).map((link)=>{
-        if(link.getElementsByClassName('cards-item-row')[0] !== undefined) return DIRECT_URL + link.getAttribute('href')
+        const tempLink = new URL(url)
+        if(link.getElementsByClassName('cards-item-row')[0] !== undefined) 
+        return tempLink.origin + link.getAttribute('href')
     }).filter(el=>el!==undefined)
 }
 /** Парсинг тегов гранта */
@@ -204,33 +213,81 @@ function parseAnchor(anchorListContainer){
 function parseList(listContainer){
     return Array.from(listContainer).map(el=>{return el.textContent})
 }//Сделать формат для дат сейчас ошибка из за того, что возвратить нужно массив а не строку
+function extractDomenName(url){
 
+}
 /**
  * 
  * Необходимо для начала парсинга, сначала загружает все данные со страницы, а затем с помощью
  * parseGrantsApplication докачивает каждый грант до конца
  */
-export async function startParse(start, end, fetchDelay){
+export async function startParse(start, end, fetchDelay, url){//url
     let parsedGrants = []
-    for(let i = start; i <= end;i++){
+    let i = start
+    while(i <= end){
+        let errorOccured = false
         await delay(fetchDelay)
-        await loadPage(i)
+        await loadPage(i, url)
                 .then(grants=>{
                     parsedGrants.push(grants)
+                })
+                .catch(err=>{
+                    console.log(err)
+                    errorOccured = true
+                })
+                if(!errorOccured){
+                    await parseGrantsApplication(parsedGrants[parsedGrants.length-1], fetchDelay)
+                    i++
+                } 
+    }
+    /*
+    for(let i = start; i <= end;i++){//Тут тоже может возникнуть ошибка и это все может похерить(при загрузке страниц грантов)
+        await delay(fetchDelay)
+        await loadPage(i, url)
+                .then(grants=>{
+                    parsedGrants.push(grants)
+                })
+                .catch(err=>{
+                    console.log(err)
                 })
         console.log(parsedGrants)
         await parseGrantsApplication(parsedGrants[parsedGrants.length-1], fetchDelay)
     }
+    */
     saveGrants(parsedGrants, start, end)
     //console.log({pages:parsedGrants})
 }
 async function parseGrantsApplication(grants, fetchDelay){
     console.log('parse grants package...')
+    
+    let i = 0;
+    while(i < grants.length){
+        let errorOccured = false;
+        await delay(fetchDelay)
+        await loadGrantApplication(grants[i])
+            .then(res =>  {
+                
+            })
+            .catch(err=>{
+                console.log(err)
+                errorOccured = true
+            })
+            
+            if(!errorOccured){
+                console.log(`grant ${i} fully parsed...`)
+                i++
+            } 
+            
+    }
+    /*
     for(let i = 0; i < grants.length;i++){
         await delay(fetchDelay)
         await loadGrantApplication(grants[i])
-        console.log(`grant ${i} fully parsed...`)
-    }
+            .then(res =>  console.log(`grant ${i} fully parsed...`))
+            .catch(err=>{
+                console.log(err)
+            })
+    }*/
     //addDataWorkSheet(grants)
 }
 function delay(ms){
