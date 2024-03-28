@@ -18,12 +18,12 @@ const PROJECT_DESC = "projects__descr"//Контейнер вмещающий в
 const PROJECT_TYPE = "projects__type"
 //const PROJECT_DATE_REG = /[0-3][0-9][.\/-][0-1][0-9][.\/-]\d{2,4}/
 const PROJECT_DATE_REG = /[0-3][0-9][.\/][0-1][0-9][.\/]\d{2,4}|[0-1]?[0-9][.\/][0-3]?[0-9][.\/-]\d{2,4}/
-const PROJECT_REQUEST_REG = /\d+-\d+-\d+/
+const PROJECT_REQUEST_REG = /[\d\wА-Яа-я]+-[\d\wА-Яа-я]+-[\d\wА-Яа-я]+/
 //Более детальное описание гранта
 const WINNER_INFO = 'winner-info__list winner-info__item'
 const WINNER_INFO_LIST_ITEM = 'winner-info__list-item-text'//Отдельный элемент
-const INN_REG = /\b\d{10}\b/
-const OGRN_REG = /\b\d{13}\b/
+const INN_REG = /(\b\d{12}\b)|(\b\d{10}\b)/ ///\b\d{10}\b/
+const OGRN_REG = /(\b\d{15}\b)|(\b\d{13}\b)/
 
 //const WINNER_STATUS = 'winner-info__status' Это уже было expertise
 const WINNER_DETAILS = 'winner__details'
@@ -47,14 +47,14 @@ const NETWORK_ERR = 'Ошибка при получении страницы'
 //let parsedGrants = []
 class Grant{
     constructor(title, contest, direction, price, fondPrice,
-        location, expertise, requestCode, fromDate, rating){
+        location, status, requestCode, fromDate, rating){
         this.title = title
         this.contest = contest
         this.direction = direction
         this.price = price
         this.fondPrice = fondPrice
         this.location = location
-        this.expertise = expertise
+        this.status = status
         this.requestCode = requestCode
         this.fromDate = fromDate
         this.rating = rating
@@ -107,16 +107,16 @@ async function loadGrantApplication(grant){
             //grant.staus = doc.getElementsByClassName(WINNER_STATUS)[0].textContent.replace(/[А-Яа-я\w]* [А-Яа-я\w]*: */,"") Это уже было expertise
             //Два одинаковых контейнера, 0 ,весь не нужен возвращен массив
             const winnerInfo = parseWinnerInfo(doc.getElementsByClassName(WINNER_INFO)[1])
-            grant.INN = searchByRegex(winnerInfo, INN_REG) //winnerInfo[2]
+            grant.INN = searchByRegex(winnerInfo, INN_REG) //winnerInfo[2]//ПДобавить опциональную длинну
             grant.OGRN = searchByRegex(winnerInfo, OGRN_REG)//winnerInfo[3]
             grant.aboutOrganization = searchByRegex(winnerInfo, /[A-Za-zА-Яа-я]+/)//winnerInfo[1]
             grant.RealizeStartDate = extractDate(winnerInfo).split('-')[0].trim()//winnerInfo[0].split('-')[0].trim()
             grant.RealizeEndDate = extractDate(winnerInfo).split('-')[1].trim()//winnerInfo[0].split('-')[1].trim()
 
-            const anchorListContainer = doc.getElementsByClassName(WINNER_ANCORS)[0]
-            grant.tags = parseAnchor(anchorListContainer).join(';')
+            //const anchorListContainer = doc.getElementsByClassName(WINNER_ANCORS)[0]
+            //grant.tags = parseAnchor(anchorListContainer).join(';')
 
-            const winnerDetails = doc.getElementsByClassName(WINNER_DETAILS)
+            //const winnerDetails = doc.getElementsByClassName(WINNER_DETAILS)
             grant.short_desc = stripText(parseTextOnly(doc.querySelector(SHORT_DESC_ID)))
             grant.social = stripText(parseTextOnly(doc.querySelector(WINNER_SOCIAL_ID)))
             grant.aims = parseList(doc.querySelector(WINNER_AIM).getElementsByTagName('li')).join(';')
@@ -165,7 +165,7 @@ function parseCard(card){
     
     const projectDescContainer = card.getElementsByClassName(PROJECT_DESC)[0]
     const location = projectDescContainer.firstElementChild.innerHTML
-    const exprestise = projectDescContainer
+    const status = projectDescContainer
                         .getElementsByClassName(PROJECT_TYPE)[0]
                         .getElementsByTagName('span')[0].innerHTML
     const requestInfo = projectDescContainer.lastElementChild.innerText
@@ -173,7 +173,7 @@ function parseCard(card){
     const requestCode = requestInfo.match(PROJECT_REQUEST_REG)[0]
     const rating = card.querySelector(".projects__type-rate span:last-child")?.textContent
     return new Grant(title, contest, direction, price, 
-                    fondPrice, location, exprestise, requestCode, fromDate, rating )
+                    fondPrice, location, status, requestCode, fromDate, rating)
 }
 function searchByRegex(dataList, reg){
     return dataList.find(el=> reg.test(el))
