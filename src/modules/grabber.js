@@ -125,11 +125,18 @@ async function loadGrantApplication(grant){
             grant.winnerTarget = parseList(doc.querySelector(WINNER_TARGET_ID).getElementsByTagName('li')).join(';')
 
             const winnerContacts = doc.getElementsByClassName(WINNER_CONTACTS)[0]
+            if(winnerContacts === undefined || winnerContacts === null){
+                console.log('contacts dont found')
+                grant.contactLocation = 'нет'
+                grant.webSite = 'нет'
+                return resolve(`grant ${grant.title} parsed with no contacts`)
+            } 
             grant.contactLocation = winnerContacts.getElementsByClassName(WINNER_CONTACTS_LOCATION)[0].textContent
             //Если сайта нет то там лишь один эдемент
             const webSiteInfo = winnerContacts.getElementsByTagName('a')
+
             if(webSiteInfo[0] === undefined){
-                grant.webSite = 'Веб-сайт: нет'
+                grant.webSite = 'нет'
             }
             else if(webSiteInfo.length === 1) {
                 grant.webSite = webSiteInfo[0].textContent
@@ -266,7 +273,7 @@ async function parseGrantsApplication(grants, fetchDelay){
         await delay(fetchDelay)
         await loadGrantApplication(grants[i])
             .then(res =>  {
-                
+                //console.log(res)
             })
             .catch(err=>{
                 console.log(err)
