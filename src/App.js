@@ -26,8 +26,8 @@ function App() {
       </Routes>
       <div className='footer'>
         <div className='footer_info'>
-          <p>Почта для связи: someMail@gmail.com</p>
-          <p>ООО "Наименование компании"</p>
+          <p>Почта для связи: v.s.osipov@aoe.su</p>
+          <p>ЧОУ ДПО "Южно-сибирский учебный центр"</p>
         </div>
       </div>
       </div>
