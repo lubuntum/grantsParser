@@ -11,9 +11,16 @@ export function saveGrants(data, start, end){
     //const worksheet = XLSX.utils.json_to_sheet(grants);
     data = data.reduce((acc, cur)=>acc.concat(cur),[])
     console.log(`Saving grants => ${data}`)
+    removeErrorSymbols(data)
     workSheet = XLSX.utils.json_to_sheet(data)
-    XLSX.utils.book_append_sheet(workBook, workSheet,`Grants_${start}_${end}`)
-    XLSX.writeFile(workBook, `Grants_${start}_${end}_${getCurrentTime()}.xlsx`)
+    try{
+        XLSX.utils.book_append_sheet(workBook, workSheet,`Grants_${start}_${end}`)
+        XLSX.writeFile(workBook, `Grants_${start}_${end}_${getCurrentTime()}.xlsx`)
+    }
+    catch(err){
+        console.error(`Error occured while saving grant -> Grants_${start}_${end}`)
+    }
+    
     //update book and sheet for new data
     workBook = XLSX.utils.book_new()
     workSheet = XLSX.utils.json_to_sheet([])
@@ -37,6 +44,14 @@ function getCurrentTime(){
     const now = new Date();
     const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
     return time
+}
+function removeErrorSymbols(data){
+    data.forEach(grant => {
+        Object.keys(grant).forEach(key=>{
+            if (typeof grant[key] === 'string')
+                grant[key] = grant[key].replace(/\ufffe/, "")
+        })
+    });
 }
 /*
 export function addDataWorkSheet(data) {

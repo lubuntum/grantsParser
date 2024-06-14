@@ -11,6 +11,7 @@ function UserPanel({grantsCompany, url}){
     const [parseDelay, setParseDelay] = useState(0.250)
 
     const [pageCount, setPageCount] = useState("")
+    const [isLoading, setIsLoading] = useState(false)
 
     const handleSaveGrantsTest = event => {
         /*Идея в том, что бы собрать массив из грантов общий и сохранить его ( к примеру лимит 1000 грантов в массиве)
@@ -33,6 +34,7 @@ function UserPanel({grantsCompany, url}){
         setPageCount(pages)
     }
     const handleSaveGrants = async event =>{
+        setIsLoading(true)
         let startFromPage = startPage
         setStatus("Загрузка ...")
         
@@ -43,7 +45,7 @@ function UserPanel({grantsCompany, url}){
             // +1 что бы не спарсить последнюю страницу, которая уже была
             startFromPage += step 
         }
-        
+        setIsLoading(false)
         setStatus("Загружено")
     }
     const handleStart = event =>{
@@ -59,7 +61,7 @@ function UserPanel({grantsCompany, url}){
         setParseDelay(parseFloat(event.target.value))
     }
     return(
-        <GrabberPanel startPage={startPage} step={step}
+        <GrabberPanel isLoading={isLoading} startPage={startPage} step={step}
                 count={count} parseDelay={parseDelay}
                 status={status} pageCount={pageCount}
                 handleStart={handleStart} handleStep={handleStep}

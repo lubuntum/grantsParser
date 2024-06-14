@@ -1,5 +1,5 @@
 function GrabberPanel({
-    startPage, step, 
+    isLoading, startPage, step, 
     count, parseDelay,
     status, pageCount,
     handleStart, handleStep,
@@ -38,7 +38,7 @@ function GrabberPanel({
                 </div>
                 <div className="options">
                 <div className="usability">
-                    <button className="parse_btn" onClick={handleSaveGrants}> Начать </button>
+                    <button className="parse_btn" style={{backgroundColor: isLoading? 'lightcoral' : '#333333'}} onClick={handleSaveGrants}> Начать </button>
                     <p>Статус: {status}</p>
                 </div>
                 <div className="usability">
