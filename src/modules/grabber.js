@@ -106,12 +106,17 @@ async function loadGrantApplication(grant){
             doc.innerHTML = html
             //grant.staus = doc.getElementsByClassName(WINNER_STATUS)[0].textContent.replace(/[А-Яа-я\w]* [А-Яа-я\w]*: */,"") Это уже было expertise
             //Два одинаковых контейнера, 0 ,весь не нужен возвращен массив
-            const winnerInfo = parseWinnerInfo(doc.getElementsByClassName(WINNER_INFO)[1])
+            const allWinnerInfo = doc.getElementsByClassName(WINNER_INFO)
+
+            const winnerInfo = parseWinnerInfo(allWinnerInfo[1])
             grant.INN = searchByRegex(winnerInfo, INN_REG) //winnerInfo[2]//ПДобавить опциональную длинну
             grant.OGRN = searchByRegex(winnerInfo, OGRN_REG)//winnerInfo[3]
             grant.aboutOrganization = searchByRegex(winnerInfo, /[A-Za-zА-Яа-я]+/)//winnerInfo[1]
             grant.RealizeStartDate = extractDate(winnerInfo).split('-')[0].trim()//winnerInfo[0].split('-')[0].trim()
             grant.RealizeEndDate = extractDate(winnerInfo).split('-')[1].trim()//winnerInfo[0].split('-')[1].trim()
+
+            const originCardInfo = allWinnerInfo[0] // Данные с лицевой карточки (для requestCode)
+            grant.requestCode = extractRequestCode(originCardInfo)
 
             //const anchorListContainer = doc.getElementsByClassName(WINNER_ANCORS)[0]
             //grant.tags = parseAnchor(anchorListContainer).join(';')
@@ -177,7 +182,7 @@ function parseCard(card){
                         .getElementsByTagName('span')[0].innerHTML
     const requestInfo = projectDescContainer.lastElementChild.innerText
     const fromDate = requestInfo.match(PROJECT_DATE_REG)[0]
-    const requestCode = requestInfo.match(PROJECT_REQUEST_REG)[0]
+    const requestCode = "" // Достается из внутренней старинцы проекта без регулярки как надо
     const rating = card.querySelector(".projects__type-rate span:last-child")?.textContent
     return new Grant(title, contest, direction, price, 
                     fondPrice, location, status, requestCode, fromDate, rating)
@@ -220,8 +225,11 @@ function parseAnchor(anchorListContainer){
 function parseList(listContainer){
     return Array.from(listContainer).map(el=>{return el.textContent})
 }//Сделать формат для дат сейчас ошибка из за того, что возвратить нужно массив а не строку
-function extractDomenName(url){
-
+//Позволяет извлечь код проекта из первого столбца
+function extractRequestCode(winnerInfoList){
+    const items = winnerInfoList.querySelectorAll("li")
+    const requestCodeContainer = items[items.length-2]
+    return stripText(requestCodeContainer.getElementsByTagName('span')[1].textContent)
 }
 /**
  * 
