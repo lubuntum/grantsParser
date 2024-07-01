@@ -22,7 +22,7 @@ function App() {
       <Routes>
         <Route path='/' element={<UserPanel grantsCompany={"ФПГ"} url = {"https://xn--80afcdbalict6afooklqi5o.xn--p1ai/public/application/cards?page="}/>}/>
         <Route path='/presidents' element={<UserPanel grantsCompany={"ФПГ"} url = {"https://xn--80afcdbalict6afooklqi5o.xn--p1ai/public/application/cards?page="}/>}/>
-        <Route path='/creative' element = {<UserPanel grantsCompany={"ПФКИ (в разработке)"} url = {"https://xn--80aeeqaabljrdbg6a3ahhcl4ay9hsa.xn--p1ai/public/application/cards?page="}/>} />
+        <Route path='/creative' element = {<UserPanel grantsCompany={"ПФКИ"} url = {"https://xn--80aeeqaabljrdbg6a3ahhcl4ay9hsa.xn--p1ai/public/application/cards?page="}/>} />
       </Routes>
       <div className='footer'>
         <div className='footer_info'>
