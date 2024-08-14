@@ -27,8 +27,14 @@
   color: lightcoral;
 }
 
+.title_info{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  text-align: center;
+}
 .title {
-  font-size: 26px;
   font-weight: bold;
   padding: 5px 15px;
 }
